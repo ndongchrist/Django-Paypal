@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from decouple import config
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -133,4 +134,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # PAYPAL_cONFIG
 PAYPAL_TEST = True  # Use PayPal sandbox
 # PAYPAL_RECEIVER_EMAIL = 'goldenbrain24@gmail.com'
-PAYPAL_RECEIVER_EMAIL = 'sb-9pkkk37720538@personal.example.com'
+PAYPAL_RECEIVER_EMAIL = config("PAYPAL_RECEIVER_EMAIL")
