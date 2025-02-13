@@ -1,7 +1,3 @@
-Sure! Below is a **detailed and simple explanation** of your project that you can include in your `README.md` file. This will help viewers of your YouTube video understand what the project is about, how it works, and how they can replicate it.
-
----
-
 # 🛒 E-Commerce Website with PayPal Integration
 
 Welcome to my **E-Commerce Website** project! This is a simple yet fully functional online store where users can browse products, add them to their cart, and complete purchases using **PayPal**. The project is built with **Django** (a Python web framework) and uses **Bootstrap** for styling.
