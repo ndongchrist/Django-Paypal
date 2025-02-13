@@ -1,0 +1,12 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container text-center mt-5">
+    <div class="card shadow p-4" style="max-width: 600px; margin: 0 auto;">
+        <h1 class="display-4 mb-4">❌ Payment Cancelled</h1>
+        <p class="lead">Your payment was not completed. Please try again if you wish to proceed.</p>
+        <p class="text-muted">If you encountered any issues, feel free to contact support.</p>
+        <hr class="my-4">
+        <a href="{% url 'product_list' %}" class="btn btn-dark btn-lg">Return to Store</a>
+    </div>
+</div>
+{% endblock %}

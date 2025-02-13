@@ -1,0 +1,12 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container text-center mt-5">
+    <div class="card shadow p-4" style="max-width: 600px; margin: 0 auto;">
+        <h1 class="display-4 mb-4">🎉 Payment Successful!</h1>
+        <p class="lead">Thank you for your purchase. Your payment has been processed successfully.</p>
+        <p class="text-muted">You will receive an email confirmation shortly.</p>
+        <hr class="my-4">
+        <a href="{% url 'product_list' %}" class="btn btn-dark btn-lg">Continue Shopping</a>
+    </div>
+</div>
+{% endblock %}

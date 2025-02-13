@@ -1,0 +1,90 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Products</h1>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                    <p class="card-text">${{ product.price }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'checkout_id' product.id %}" class="btn btn-dark">Buy Now</a>
+                        <button class="btn btn-warning add-to-cart" data-product-id="{{ product.id }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- JavaScript for Cart Functionality -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get all "Add to Cart" buttons
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+
+        // Add event listener to each button
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Get product details from data attributes
+                const productId = this.getAttribute('data-product-id');
+                const productName = this.getAttribute('data-product-name');
+                const productPrice = this.getAttribute('data-product-price');
+
+                // Create a product object
+                const product = {
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                };
+
+                // Add product to cart in local storage
+                addToCart(product);
+
+                // Update the cart count in the header
+                updateCartCount();
+            });
+        });
+
+        // Function to add product to cart
+        function addToCart(product) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Check if the product is already in the cart
+            const existingProduct = cart.find(item => item.id === product.id);
+
+            if (existingProduct) {
+                // If product exists, increase the quantity
+                existingProduct.quantity += 1;
+            } else {
+                // If product doesn't exist, add it to the cart
+                cart.push(product);
+            }
+
+            // Save the updated cart back to local storage
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Function to update the cart count in the header
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+            // Update the cart count in the header
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = cartCount;
+            }
+        }
+
+        // Initialize the cart count when the page loads
+        updateCartCount();
+    });
+</script>
+{% endblock %}

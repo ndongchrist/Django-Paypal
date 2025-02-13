@@ -1,0 +1,104 @@
+{% extends 'store/base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Your Cart</h1>
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Cart Items -->
+            <div class="card">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td>{{ item.name }}</td>
+                                <td>${{ item.price }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ item.total_price }}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm remove-from-cart" data-product-id="{{ item.id }}">Remove</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <!-- Order Summary -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+                    <p>Total Items: {{ total_items }}</p>
+                    <p>Total Price: ${{ total_price }}</p>
+                    <a href="{% url 'checkout' %}" class="btn btn-warning btn-block">Proceed to Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        Your cart is empty. <a href="{% url 'product_list' %}">Continue shopping</a>.
+    </div>
+    {% endif %}
+</div>
+
+<!-- JavaScript for Cart Functionality -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Send cart data to the server when the page loads
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length > 0) {
+            fetch('{% url "cart" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ cart: cart })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload the page to display the updated cart
+                    window.location.reload();
+                }
+            });
+        }
+
+        // Remove item from cart
+        const removeButtons = document.querySelectorAll('.remove-from-cart');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+                removeFromCart(productId);
+            });
+        });
+
+        // Function to remove item from cart
+        function removeFromCart(productId) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Filter out the item to remove
+            cart = cart.filter(item => item.id !== productId);
+
+            // Save the updated cart back to local storage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Reload the page to reflect changes
+            window.location.reload();
+        }
+    });
+</script>
+{% endblock %}
