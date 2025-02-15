@@ -56,6 +56,40 @@ def checkout(request):
     return render(request, 'store/checkout.html', {'form': form, 'total_amount': total_amount})
 
 
+def checkout_detail(request, product_id):
+    # Retrieve cart data from local storage (simulated here)
+    cart_data = request.session.get('cart', [])
+
+    if not cart_data:
+        return redirect('cart')  # Redirect to the cart page if the cart is empty
+
+
+    product = get_object_or_404(Product, id=product_id)
+    order = Order.objects.create(
+            product=product,
+            quantity=1,
+            total_price=product.price
+        )
+
+    # Generate PayPal payment form for the total amount
+    paypal_dict = {
+        "business": settings.PAYPAL_RECEIVER_EMAIL,
+        "amount": product.price,
+        "item_name": product.name,
+        "invoice": order.id,  # Use the first order ID as the invoice ID
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "return_url": request.build_absolute_uri(reverse('payment_done')),
+        "cancel_return": request.build_absolute_uri(reverse('payment_cancelled')),
+    }
+
+    form = PayPalPaymentsForm(initial=paypal_dict)
+
+    # Clear the cart after generating the PayPal form
+    request.session['cart'] = []
+
+    return render(request, 'store/checkout.html', {'form': form, 'total_amount': product.price})
+
+
 def payment_done(request):
     return render(request, 'store/payment_done.html')
 
